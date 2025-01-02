@@ -64,15 +64,15 @@ app.post("/signin", async (c) => {
     if (!user) {
       return c.json({ error: "Invalid Email or Password" }, 400);
     }
-    const hashedPassword = await compare(data.password, user.password);
-    console.log(hashedPassword);
+    const checkPassword = await compare(data.password, user.password);
+    if (!checkPassword) {
+      return c.json({ error: "Invalid Email or Password" }, 400);
+    }
     const token = await sign({ id: user!.id }, c.env.JWT_SECRET);
     return c.json({ token: token });
   } catch (err) {
     return c.json({ error: "Internal Server Error" }, 500);
   }
 });
-app.post("/blog", (c) => {
-  return c.text("Signup route");
-});
+
 export default app;

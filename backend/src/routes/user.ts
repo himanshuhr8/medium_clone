@@ -4,7 +4,11 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { decode, sign, verify } from "hono/jwt";
 import { z } from "zod";
 import { compare, compareSync, hash } from "bcryptjs";
+
 const app = new Hono<{
+  Variables: {
+    userId: string;
+  };
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
@@ -74,5 +78,59 @@ app.post("/signin", async (c) => {
     return c.json({ error: "Internal Server Error" }, 500);
   }
 });
+app.use("*", async (c, next) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
 
+    const header = c.req.header("Authorization");
+    if (!header || !header.startsWith("Bearer ")) {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+    const token = header.split(" ")[1];
+    if (!token) {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+    const decoded = decode(token);
+
+    const userId = decoded.payload.id;
+    const response = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (response) {
+      c.set("userId", userId as string);
+      return next();
+    } else {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+  } catch (e) {
+    return c.json({ message: "Unauthorized" }, 401);
+  }
+});
+app.get("/profile", async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const response = await prisma.user.findUnique({
+      where: {
+        id: c.get("userId"),
+      },
+      select: {
+        email: true,
+        name: true,
+      },
+    });
+    return c.json({ user: response });
+  } catch (e) {
+    return c.json({ message: "Internal Server Error" }, 500);
+  }
+});
 export default app;

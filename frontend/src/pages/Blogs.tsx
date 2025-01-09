@@ -1,11 +1,25 @@
 import { Appbar } from "../components/Appbar";
 import { BlogCard } from "../components/BlogCard";
+import { BlogsSkeleton } from "../components/BlogsSkeleton";
 import { useBlogs } from "../hooks/BlogHook";
 
 const Blog = () => {
   const { loading, blogs } = useBlogs();
-  if (loading) {
-    return <div>Loading...</div>;
+  if (loading || !blogs) {
+    return (
+      <div>
+        <Appbar />
+        <div className="flex justify-center ">
+          <div className="max-w-xl">
+            <BlogsSkeleton />
+            <BlogsSkeleton />
+            <BlogsSkeleton />
+            <BlogsSkeleton />
+            <BlogsSkeleton />
+          </div>
+        </div>
+      </div>
+    );
   }
   return (
     <div>

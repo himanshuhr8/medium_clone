@@ -1,8 +1,11 @@
 import { Avatar } from "./Avatar";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { userAtomFamily } from "../store/atom";
 export const Appbar = () => {
   const navigate = useNavigate();
+  const user = useRecoilValue(userAtomFamily("user"));
   return (
     <div className="sticky top-0 bg-white  z-10">
       <div className="flex justify-between border-b px-10 py-1 ">
@@ -19,7 +22,7 @@ export const Appbar = () => {
           >
             Publish
           </button>
-          <Avatar size="large" authorName="Hima" />
+          <Avatar size="large" authorName={user.name} />
         </div>
       </div>
     </div>

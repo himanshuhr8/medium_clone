@@ -62,11 +62,18 @@ app.post("/", async (c) => {
       content: z.string(),
     });
     const data = schema.parse(body);
+    const formattedDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+    console.log(formattedDate);
     const post = await prisma.post.create({
       data: {
         title: data.title,
         content: data.content,
         authorId: userId,
+        publishedOn: formattedDate,
       },
       select: {
         id: true,
@@ -118,6 +125,7 @@ app.get("/bulk", async (c) => {
         title: true,
         content: true,
         id: true,
+        publishedOn: true,
         author: {
           select: {
             name: true,
@@ -146,6 +154,7 @@ app.get("/:id", async (c) => {
         title: true,
         content: true,
         id: true,
+        publishedOn: true,
         author: {
           select: {
             name: true,

@@ -38,7 +38,7 @@ const Blog = () => {
                 <div className="flex text-slate-500">
                   <div>{readingTime} min read</div>
                   {/* center dot missing? */}
-                  <div className="ml-2">Jan 8, 2025</div>
+                  <div className="ml-2">{blog.publishedOn}</div>
                 </div>
               </div>
             </div>

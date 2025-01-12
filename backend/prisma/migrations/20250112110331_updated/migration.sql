@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Post" ALTER COLUMN "publishedOn" DROP DEFAULT,
+ALTER COLUMN "publishedOn" SET DATA TYPE TEXT;

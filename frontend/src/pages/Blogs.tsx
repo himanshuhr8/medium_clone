@@ -29,7 +29,7 @@ const Blog = () => {
           {blogs.map((blog) => (
             <BlogCard
               authorName={blog.author.name}
-              publishedDate="Jan 8, 2025"
+              publishedDate={blog.publishedOn}
               title={blog.title}
               content={blog.content}
               id={blog.id}
